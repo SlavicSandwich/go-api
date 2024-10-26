@@ -1,4 +1,4 @@
-package go_api
+package main
 
 import (
 	"net/http"
@@ -7,15 +7,30 @@ import (
 )
 
 func TestGETPlayers(t *testing.T) {
-	request, _ := http.NewRequest(http.MethodGet, "/players/Pepper", nil)
-	response := httptest.NewRecorder()
+	t.Run("returns Pepper's score", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/players/Pepper", nil)
+		response := httptest.NewRecorder()
 
-	PlayerServer(response, request)
+		PlayerServer(response, request)
 
-	got := response.Body.String()
-	want := "20"
+		got := response.Body.String()
+		want := "20"
 
-	if got != want {
-		t.Errorf("got %q, want %q", got, want)
-	}
+		if got != want {
+			t.Errorf("got %q, want %q", got, want)
+		}
+	})
+	t.Run("returns Floyd's score", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/players/Floyd", nil)
+		response := httptest.NewRecorder()
+
+		PlayerServer(response, request)
+
+		got := response.Body.String()
+		want := "10"
+
+		if got != want {
+			t.Errorf("got %q, want %q", got, want)
+		}
+	})
 }
