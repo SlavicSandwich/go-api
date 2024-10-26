@@ -35,9 +35,9 @@ func assertStatus(t testing.TB, got, want int) {
 	}
 }
 
-func NewGetScoreRequest(t testing.TB, name string) (*http.Request, error) {
-	t.Helper()
-	return http.NewRequest(http.MethodGet, "/players/"+name, nil)
+func NewGetScoreRequest(name string) *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/players/"+name, nil)
+	return req
 }
 
 func TestGETPlayers(t *testing.T) {
@@ -51,7 +51,7 @@ func TestGETPlayers(t *testing.T) {
 	server := &PlayerServer{store: &store}
 
 	t.Run("returns Pepper's score", func(t *testing.T) {
-		request, _ := NewGetScoreRequest(t, "Pepper")
+		request := NewGetScoreRequest("Pepper")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -60,7 +60,7 @@ func TestGETPlayers(t *testing.T) {
 		assertResponseBody(t, response.Body.String(), "20")
 	})
 	t.Run("returns Floyd's score", func(t *testing.T) {
-		request, _ := NewGetScoreRequest(t, "Floyd")
+		request := NewGetScoreRequest("Floyd")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -69,7 +69,7 @@ func TestGETPlayers(t *testing.T) {
 		assertResponseBody(t, response.Body.String(), "10")
 	})
 	t.Run("returns 404 when player does not exist", func(t *testing.T) {
-		request, _ := NewGetScoreRequest(t, "Jack")
+		request := NewGetScoreRequest("Jack")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)

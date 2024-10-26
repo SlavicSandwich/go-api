@@ -19,9 +19,9 @@ func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	player := strings.TrimPrefix(r.URL.Path, "/players/")
 	switch r.Method {
 	case http.MethodGet:
-		p.ProcessScore(w, r)
+		p.ProcessScore(w, r, player)
 	case http.MethodPost:
-		p.ProcessWin(w, r)
+		p.ProcessWin(w, r, player)
 	}
 }
 
