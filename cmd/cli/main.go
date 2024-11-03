@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Type {Name} wins to record a win")
 
 	store, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
-	game := poker.NewGame(poker.BlindAlerterFunc(poker.StdOutAlerter), store)
+	game := poker.NewTexasHoldem(poker.BlindAlerterFunc(poker.StdOutAlerter), store)
 	if err != nil {
 		log.Fatal(err)
 	}

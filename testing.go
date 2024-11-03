@@ -16,6 +16,14 @@ type StubPlayerStore struct {
 	league   League
 }
 
+func NewStubPlayerStore(scores map[string]int, winCalls []string, league League) *StubPlayerStore {
+	return &StubPlayerStore{
+		scores:   scores,
+		winCalls: winCalls,
+		league:   league,
+	}
+}
+
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
 	score := s.scores[name]
 	return score
@@ -54,10 +62,10 @@ func AssertLeague(t testing.TB, got, want League) {
 	}
 }
 
-func AssertStatus(t testing.TB, got, want int) {
+func AssertStatus(t testing.TB, got *httptest.ResponseRecorder, want int) {
 	t.Helper()
-	if got != want {
-		t.Errorf("did not get correct status, got %d, want %d", got, want)
+	if got.Code != want {
+		t.Errorf("did not get correct status, got %d, want %d", got.Code, want)
 	}
 }
 
@@ -124,7 +132,7 @@ type SpyBlindAlerter struct {
 	Alerts []ScheduledAlert
 }
 
-func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
+func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int, to io.Writer) {
 	s.Alerts = append(s.Alerts, ScheduledAlert{duration, amount})
 }
 
