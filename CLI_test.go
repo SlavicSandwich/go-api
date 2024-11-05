@@ -11,17 +11,21 @@ import (
 var dummyPlayerStore = &poker.StubPlayerStore{}
 
 type GameSpy struct {
-	StartCalled bool
-	StartedWith int
-	PlayerWon   string
+	StartCalled     bool
+	StartCalledWith int
+	BlindAlert      []byte
+
+	FinishedCalled   bool
+	FinishCalledWith string
 }
 
-func (g *GameSpy) Start(numberOfPlayers int, to io.Writer) {
+func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
 	g.StartCalled = true
-	g.StartedWith = numberOfPlayers
+	g.StartCalledWith = numberOfPlayers
+	out.Write(g.BlindAlert)
 }
 func (g *GameSpy) Finish(winner string) {
-	g.PlayerWon = winner
+	g.FinishCalledWith = winner
 }
 
 func TestCLI(t *testing.T) {
@@ -104,14 +108,14 @@ func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...st
 
 func assertGameStartedWith(t testing.TB, game *GameSpy, numberOfPlayersWanted int) {
 	t.Helper()
-	if game.StartedWith != numberOfPlayersWanted {
-		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartedWith)
+	if game.StartCalledWith != numberOfPlayersWanted {
+		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartCalledWith)
 	}
 }
 
 func assertFinishCalledWith(t testing.TB, game *GameSpy, winner string) {
 	t.Helper()
-	if game.PlayerWon != winner {
-		t.Errorf("expected finish called with %q but got %q", winner, game.PlayerWon)
+	if game.FinishCalledWith != winner {
+		t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
 	}
 }
